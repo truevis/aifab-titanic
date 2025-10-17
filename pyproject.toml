@@ -1,0 +1,11 @@
+[project]
+name="polars-tutorial"
+requires-python = ">= 3.13"
+version="0.1.0"
+dependencies = [
+    "altair>=5.5.0",
+    "jupyterlab>=4.4.9",
+    "numpy>=2.3.3",
+    "plotly>=6.3.1",
+    "polars>=1.34.0",
+]
