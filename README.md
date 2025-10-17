@@ -55,4 +55,7 @@ This app analyzes the Titanic dataset using the Polars DataFrame library for fas
 - The app converts results to Pandas only for visualization, keeping compute in Polars for clarity and performance.
 
 
+App is live at https://aifab-titanic.streamlit.app/
+
+
 
