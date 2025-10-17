@@ -33,6 +33,30 @@ def render_plotly_chart(fig):
     """
     return st.plotly_chart(fig, config={"responsive": True})
 
+def render_sidebar_about():
+    """Render an About section in the sidebar explaining Polars usage."""
+    with st.sidebar.expander("About"):
+        st.markdown(
+            """
+            **This app uses Polars for fast, expressive data processing:**
+
+            - **Fast columnar engine**: Vectorized operations and low memory use.
+            - **Lazy queries when helpful**: Build filters with `df.lazy().filter(...)` and execute via `.collect()` to measure performance interactively.
+            - **Clear expressions**: Chainable APIs for grouping, pivoting, filtering, and string ops (e.g., `pl.col(...).str.*`).
+            - **Compute in Polars, present via Pandas**: Convert to Pandas only at the UI boundary for Plotly charts and `st.dataframe`.
+
+            Key examples in the app:
+            - Data load: `pl.read_csv("data/titanic.csv.gz")`
+            - Counts/proportions: `value_counts()` then derive proportions with expressions
+            - Grouped stats: `group_by(...).agg(...)` (e.g., survival rate by class)
+            - Pivots: `pivot(values=..., index=..., on=..., aggregate_function=...)`
+            - String ops: extract titles from `Name` using list/string transformations
+            
+            ---
+            Derived from the Polars tutorial repository: [datapythonista-talks/polars-tutorial](https://gitlab.com/datapythonista-talks/polars-tutorial)
+            """
+        )
+
 def show_image_if_exists(path, width="stretch"):
     """Show an image if the file exists; otherwise, show a non-blocking warning."""
     if os.path.exists(path):
@@ -410,6 +434,7 @@ def main():
         default="All Analyses",
         width="stretch"
     )
+    render_sidebar_about()
     
     if analysis_type == "Dataset Overview" or analysis_type == "All Analyses":
         display_basic_info(df)
@@ -437,6 +462,8 @@ def main():
     st.markdown("**Data Source:** [Kaggle Titanic Dataset](https://www.kaggle.com/c/titanic/data)")
     st.markdown("**Powered by:** [aifab.xyz](https://aifab.xyz) + Polars + Streamlit + Plotly")
     st.markdown("**GitHub:** [truevis/aifab-titanic](https://github.com/truevis/aifab-titanic)")
+
+    st.markdown("Derived from the Polars tutorial repository: [datapythonista-talks/polars-tutorial](https://gitlab.com/datapythonista-talks/polars-tutorial)")
 
 if __name__ == "__main__":
     main()

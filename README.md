@@ -54,8 +54,9 @@ This app analyzes the Titanic dataset using the Polars DataFrame library for fas
 - Polars powers data ingestion, schema inspection, filtering (eager and lazy), grouping, pivoting, value counting, string transforms, and categorical mapping.
 - The app converts results to Pandas only for visualization, keeping compute in Polars for clarity and performance.
 
-
+### Web App
 App is live at https://aifab-titanic.streamlit.app/
 
 
-
+### Attribution
+This app was derived from the Polars tutorial repository: [datapythonista-talks/polars-tutorial](https://gitlab.com/datapythonista-talks/polars-tutorial)
