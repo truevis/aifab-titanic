@@ -83,9 +83,6 @@ def display_basic_info(df):
         size_kb = df.estimated_size() / 1024
         st.metric("Memory Usage", f"{size_kb:.1f} KB")
     
-    st.subheader("Dataset Schema")
-    st.write(df.schema)
-    
     # Lazy filter controls
     st.subheader("All Rows")
     col_f1, col_f2 = st.columns(2)
@@ -109,10 +106,12 @@ def display_basic_info(df):
         end_filter = time.perf_counter()
         st.metric("Filter time (seconds)", f"{end_filter - start_filter:.6f}")
         st.write(f"Filtered rows: {shown_df.height}")
-        st.dataframe(shown_df.to_pandas(), width="stretch")
+        st.dataframe(shown_df.to_pandas(), width="stretch", hide_index=True)
+        return shown_df
     else:
         st.metric("Filter time (seconds)", f"{0.0:.6f}")
-        st.dataframe(df.to_pandas(), width="stretch")
+        st.dataframe(df.to_pandas(), width="stretch", hide_index=True)
+        return df
 
 def analyze_passenger_sex(df):
     """Analyze passenger sex distribution"""
@@ -132,11 +131,11 @@ def analyze_passenger_sex(df):
     
     with col1:
         st.write("**Count by Sex:**")
-        st.dataframe(sex_counts.to_pandas(), width="stretch")
+        st.dataframe(sex_counts.to_pandas(), width="stretch", hide_index=True)
     
     with col2:
         st.write("**Proportion by Sex:**")
-        st.dataframe(sex_proportions.to_pandas(), width="stretch")
+        st.dataframe(sex_proportions.to_pandas(), width="stretch", hide_index=True)
     
     # Bar chart
     fig = px.bar(
@@ -166,7 +165,7 @@ def analyze_passenger_classes(df, show_survival_rate_image=False):
     )
     
     st.write("**Passenger Count by Class and Survival:**")
-    st.dataframe(survival_by_class.to_pandas(), width="stretch")
+    st.dataframe(survival_by_class.to_pandas(), width="stretch", hide_index=True)
     
     # Survival rates by class
     survival_rates = df.group_by("Pclass").agg(
@@ -176,7 +175,7 @@ def analyze_passenger_classes(df, show_survival_rate_image=False):
     # if show_survival_rate_image:
     #     show_image_if_exists("img/titanic_door.jpg", width=400)
     st.write("**Survival Rate by Class:**")
-    st.dataframe(survival_rates.to_pandas(), width="stretch")
+    st.dataframe(survival_rates.to_pandas(), width="stretch", hide_index=True)
     
     # Bar chart for survival rates
     fig = px.bar(
@@ -199,7 +198,7 @@ def analyze_embarkation_ports(df):
     # Get unique ports
     unique_ports = df["Embarked"].unique()
     st.write("**Unique Ports:**")
-    st.dataframe(pl.DataFrame({"Embarked": unique_ports.to_list()}).to_pandas(), width="stretch")
+    st.dataframe(pl.DataFrame({"Embarked": unique_ports.to_list()}).to_pandas(), width="stretch", hide_index=True)
     
     # Replace abbreviations with full names
     df_ports = df.with_columns(
@@ -223,11 +222,11 @@ def analyze_embarkation_ports(df):
     
     with col1:
         st.write("**Passengers by Port:**")
-        st.dataframe(port_counts.to_pandas(), width="stretch")
+        st.dataframe(port_counts.to_pandas(), width="stretch", hide_index=True)
     
     with col2:
         st.write("**Proportion by Port:**")
-        st.dataframe(port_proportions.to_pandas(), width="stretch")
+        st.dataframe(port_proportions.to_pandas(), width="stretch", hide_index=True)
     
     # Pie chart
     fig = px.pie(
@@ -255,7 +254,7 @@ def analyze_passenger_names(df):
               .sort("count", descending=True))
     
     st.write("**Passenger Titles Distribution:**")
-    st.dataframe(titles.head(10).to_pandas(), width="stretch")
+    st.dataframe(titles.head(10).to_pandas(), width="stretch", hide_index=True)
     
     # Create bar chart for passenger titles
     fig = px.bar(
@@ -279,7 +278,7 @@ def analyze_passenger_names(df):
     if captain.height > 0:
         st.write("**Titanic Captain Information:**")
         captain_info = captain.select("Name", "Age", "Pclass")
-        st.dataframe(captain_info.to_pandas(), width="stretch")
+        st.dataframe(captain_info.to_pandas(), width="stretch", hide_index=True)
     else:
         st.write("No captain found in the dataset")
 
@@ -375,7 +374,7 @@ def analyze_survival_by_sex_and_class(df):
                      .sort("Passenger Class"))
     
     st.write("**Survival Rate by Sex and Class:**")
-    st.dataframe(survival_table.to_pandas(), width="stretch")
+    st.dataframe(survival_table.to_pandas(), width="stretch", hide_index=True)
     
     # Create heatmap
     survival_df = survival_table.to_pandas().set_index('Passenger Class')
@@ -439,25 +438,34 @@ def main():
     )
     render_sidebar_about()
     
-    if analysis_type == "Dataset Overview" or analysis_type == "All Analyses":
+    if analysis_type == "Dataset Overview":
         display_basic_info(df)
     
-    if analysis_type == "Passenger Sex Analysis" or analysis_type == "All Analyses":
+    if analysis_type == "All Analyses":
+        filtered_df = display_basic_info(df)
+        analyze_passenger_sex(filtered_df)
+        analyze_passenger_classes(filtered_df, show_survival_rate_image=True)
+        analyze_embarkation_ports(filtered_df)
+        analyze_passenger_names(filtered_df)
+        create_scatter_plots(filtered_df)
+        analyze_survival_by_sex_and_class(filtered_df)
+    
+    if analysis_type == "Passenger Sex Analysis":
         analyze_passenger_sex(df)
     
-    if analysis_type == "Passenger Class Analysis" or analysis_type == "All Analyses":
-        analyze_passenger_classes(df, show_survival_rate_image=(analysis_type == "All Analyses"))
+    if analysis_type == "Passenger Class Analysis":
+        analyze_passenger_classes(df, show_survival_rate_image=False)
     
-    if analysis_type == "Embarkation Port Analysis" or analysis_type == "All Analyses":
+    if analysis_type == "Embarkation Port Analysis":
         analyze_embarkation_ports(df)
     
-    if analysis_type == "Passenger Name Analysis" or analysis_type == "All Analyses":
+    if analysis_type == "Passenger Name Analysis":
         analyze_passenger_names(df)
     
-    if analysis_type == "Age vs Fare Analysis" or analysis_type == "All Analyses":
+    if analysis_type == "Age vs Fare Analysis":
         create_scatter_plots(df)
     
-    if analysis_type == "Survival Analysis" or analysis_type == "All Analyses":
+    if analysis_type == "Survival Analysis":
         analyze_survival_by_sex_and_class(df)
 
     
