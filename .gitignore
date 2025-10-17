@@ -1,6 +1,5 @@
 .streamlit/secrets.toml
 .history
-data/
 output/
 .hold/
 # Python
