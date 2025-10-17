@@ -397,17 +397,17 @@ def main():
     analysis_type = st.sidebar.pills(
         "**Choose Analysis Type:**",
         options=[
+            "All Analyses",
             "Dataset Overview",
             "Passenger Sex Analysis", 
             "Passenger Class Analysis",
             "Embarkation Port Analysis",
             "Passenger Name Analysis",
             "Age vs Fare Analysis",
-            "Survival Analysis",
-            "All Analyses"
+            "Survival Analysis"
         ],
         selection_mode="single",
-        default="Dataset Overview",
+        default="All Analyses",
         width="stretch"
     )
     
