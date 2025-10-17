@@ -57,7 +57,7 @@ def render_sidebar_about():
             """
         )
         st.markdown("**Data Source:** [Kaggle Titanic Dataset](https://www.kaggle.com/c/titanic/data)")
-        st.markdown("**Powered by:** [aifab.xyz](https://aifab.xyz) + Polars + Streamlit + Plotly")
+        st.markdown("**Powered by:** Eric Boehlke + [aifab.xyz](https://aifab.xyz) + Polars + Streamlit + Plotly")
         st.markdown("**GitHub:** [truevis/aifab-titanic](https://github.com/truevis/aifab-titanic)")
 
 def show_image_if_exists(path, width="stretch"):
